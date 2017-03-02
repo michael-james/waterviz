@@ -7,14 +7,17 @@ const board = new five.Board({ io: new Raspi() });
 // set variables
 ///////////////////////////////////////////////////
 
-var count = 1;        // number of servos
-var gMin = 20;         // global minimum degrees
-var gMax = 147;        // global maximum degrees
-var tDur = 24000;      // duration of movement in ms
-var tDly = 1000;       // duration of delay in ms
-var constRate = true;  // movement always at same speed?
-var randOrder = true;  // set values out of order
+var count = 11;        // number of servos
+var gMin = 0;         // global minimum degrees
+// var gMax = 180;        // global maximum degrees
+// var gMin = 20;         // global minimum degrees
+var gMax = 140;        // global maximum degrees
+var tDur = 3000;      // duration of movement in ms
+var tDly = 2000;       // duration of delay in ms
+var constRate = false;  // movement always at same speed?
+var randOrder = false;  // set values out of order
 var fakeMax = true;
+var valMax = false;
 
 var offsets = [
     [ 0, 0, 0], [ 1, 0, 0], [ 2, 0, 0], [ 3, 0, 0], [ 4, 0, 0], [ 5, 0, 0],
@@ -75,6 +78,7 @@ function moveAlone(data) {
   if (randOrder) var myOrder = makeOrder();
 
   function delayWrapper(i) {
+    // console.log(i);
     var j = i;
     if (randOrder) {
       j = myOrder[i];
@@ -95,15 +99,25 @@ function moveAlone(data) {
 
     setTimeout(function () {
       if (i < (s.length - 1)) {          // If i > 0, keep going
-        delayWrapper(++i);       // Call the loop again, and pass it the current value of i
-      } else {
-        moveAll(0);
+        i = i + 1;
+        delayWrapper(i);       // Call the loop again, and pass it the current value of i
+      } 
+      else {
+        // moveAll(0);
 
-        randOrder = !randOrder;
+        // var zero = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        // console.log(zero);
+        // moveAlone(zero);
+
+        // randOrder = !randOrder;
+
+        // setTimeout(function() {
+        //   moveAlone(newData());
+        // }, tTot);
 
         setTimeout(function() {
           moveAlone(newData());
-        }, tTot);
+        }, tDly);
       }
     }, myDur);
   };
@@ -123,8 +137,9 @@ function moveAll(val) {
 
 function newData() {
   var data = [];
+  valMax = !valMax;
+  var val = valMax * 1.0;
   for (var i = 0; i < s.length; i++) {
-    var val = 1;
     if (!fakeMax) {val = Math.random();}
     data.push(val);
   }
