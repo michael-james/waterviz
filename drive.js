@@ -8,7 +8,7 @@ const board = new five.Board({ io: new Raspi() });
 ///////////////////////////////////////////////////
 
 var count = 10;        // number of servos
-var gMin = 0;         // global minimum degrees
+var gMin = 35;         // global minimum degrees
 // var gMax = 180;        // global maximum degrees
 // var gMin = 50;         // global minimum degrees
 var gMax = 135;        // global maximum degrees
@@ -54,32 +54,37 @@ board.on("ready", () => {
   // }
 
   // set to relative "zero"
-  // console.log("\n=== move all to myMin ===");
-  // for (var e = 0; e < s.length; e++) {
-  //   var myMin = gMin + offsets[e][1];
-  //   s[e].to(myMin, tDur / 2);
-  //   console.log("servo " + e + " to " + myMin + " degrees in " + tDur + "ms");
-  // }
+  console.log("\n=== move all to myMin ===");
+  for (var e = 0; e < s.length; e++) {
+    var myMin = gMin + offsets[e][1];
+    var myDur = tDur / 2;
+
+    s[e].to(myMin, myDur);
+    console.log("servo " + e + " to " + myMin + " degrees in " + myDur + "ms");
+  }
 
   setTimeout(function() {
     moveAlone(newData()); // constant rate
     // moveAlone(newData(), false); // constant time
     // moveTogether(newData()); setInterval(function() {console.log(); moveTogether(newData());}, tTot);
     // moveAll(0);
-  }, tDly);
+  }, tDur);
 });
 
-function moveTogether(data) {
+function moveTogether(data, literal) {
   // iterate through servos
   for (var i = 0; i < s.length; i++) {
     // apply offsets to global range
     var myMin = gMin + offsets[i][1];
     var myMax = gMax + offsets[i][2];
+    var myDur = tDur * 2;
     
     // convert data to my degrees then move to
     var degrees = myMin + Math.floor(data[i] * (myMax - myMin));
-    s[i].to(degrees, tDur);
-    console.log("servo " + i + " to " + degrees + " degrees in " + tDur + "ms");
+    if (literal) {degrees = data[i]};
+
+    s[i].to(degrees, myDur);
+    console.log("servo " + i + " to " + degrees + " degrees in " + myDur + "ms");
   }
 }
 
@@ -104,6 +109,7 @@ function moveAlone(data) {
       if (constRate) {
         myDur = Math.floor(myAngle / myArc * tDur)
       };
+      if (data[j] == 0) {myDur = myDur * 2;}
       
       console.log("servo " + j + " to " + degrees + " degrees in " + myDur + "ms");
       s[j].to(degrees, myDur);
@@ -111,6 +117,9 @@ function moveAlone(data) {
       setTimeout(function () {
         if (i < (s.length - 1)) {          // If i > 0, keep going
           i = i + 1;
+          if (i == 1 || i == 7) {
+            i = i + 1;
+          }
           delayWrapper(i);       // Call the loop again, and pass it the current value of i
         } 
         else {
@@ -126,9 +135,9 @@ function moveAlone(data) {
           //   moveAlone(newData());
           // }, tTot);
 
-          // setTimeout(function() {
-            // moveAlone(newData());
-          // }, tDly);
+          setTimeout(function() {
+            moveAlone(newData());
+          }, tDly);
         }
       }, myDur);
     }
@@ -144,18 +153,19 @@ function moveAll(val) {
   }
 
   console.log("\n=== move all to " + val + "% ===");
-  moveTogether(data);
+  moveTogether(data, true);
 }
 
 function newData(zero) {
   var data = [];
   valMax = !valMax;
   var val = valMax * 1.0;
-  if (zero) {
-    val = 0;
-  }
+  // if (zero) {
+  //   val = 0;
+  // }
   for (var i = 0; i < s.length; i++) {
     if (!fakeMax) {val = Math.random();}
+    // if (i % 2 == 0) {val = Math.random();}
     data.push(val);
   }
   return data;
