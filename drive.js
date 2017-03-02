@@ -11,7 +11,7 @@ var count = 10;        // number of servos
 var gMin = 0;         // global minimum degrees
 // var gMax = 180;        // global maximum degrees
 // var gMin = 50;         // global minimum degrees
-var gMax = 120;        // global maximum degrees
+var gMax = 135;        // global maximum degrees
 var tDur = 24000;      // duration of movement in ms
 var tDly = 5000;       // duration of delay in ms
 var constRate = false;  // movement always at same speed?
@@ -54,10 +54,12 @@ board.on("ready", () => {
   // }
 
   // set to relative "zero"
-  for (var e = 0; e < s.length; e++) {
-    var myMin = gMin + offsets[e][1];
-    s[e].to(myMin, tDur / 2);
-  }
+  // console.log("\n=== move all to myMin ===");
+  // for (var e = 0; e < s.length; e++) {
+  //   var myMin = gMin + offsets[e][1];
+  //   s[e].to(myMin, tDur / 2);
+  //   console.log("servo " + e + " to " + myMin + " degrees in " + tDur + "ms");
+  // }
 
   setTimeout(function() {
     moveAlone(newData()); // constant rate
@@ -238,7 +240,7 @@ process.stdin.on('keypress', function (ch, key) {
 
       console.log("resetting to home... waiting to exit...");
       setTimeout(function() {moveAll(0);}, (tDly));
-      setTimeout(function() {process.stdin.pause();}, (tDur * 2));
+      setTimeout(function() {process.stdin.pause();}, (tDur + tDly));
     }
 
     timePressed = new Date().getTime();
