@@ -1,5 +1,3 @@
-// var five = require("johnny-five");
-// var board = new five.Board();
 
 const Raspi = require('raspi-io');
 const five = require('johnny-five');
