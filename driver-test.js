@@ -44,13 +44,12 @@ board.on("ready", () => {
     process.stdout.write("new!");
 
     var data = [];
-    for (var i = 0; i < count; i++) {
+    for (var i = 0; i < s.length; i++) {
       data.push(Math.random());
     }
 
     // iterate through servos
-    for (var i = s.length - 1; i >= 0; i--) {
-
+    for (var i = 0; i < s.length; i++) {
       var myMin = yMin + offsets[i][1];
       var myMax = yMax + offsets[i][2];
       
