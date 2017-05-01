@@ -117,7 +117,7 @@ function moveAlone(data) {
         // }, tTot);
 
         setTimeout(function() {
-          // moveAlone(newData());
+          moveAlone(newData());
         }, tDly);
       }
     }, myDur);
@@ -198,27 +198,38 @@ process.on('SIGINT', exitHandler.bind(null, {exit:true}));
 // keypress
 ///////////////////////////////////////////////////
 
-var keypress = require('keypress');
+// var keypress = require('keypress');
+
+// var timePressed = 0;
+// var delta = 1000;
  
-// make `process.stdin` begin emitting "keypress" events 
-keypress(process.stdin);
+// // make `process.stdin` begin emitting "keypress" events 
+// keypress(process.stdin);
  
-// listen for the "keypress" event 
-process.stdin.on('keypress', function (ch, key) {
-  console.log('got "keypress"', key);
-  if (key && key.ctrl && key.name == 'c') {
-    process.stdin.pause();
-  }
-  if (key && key.name == 'h') {
-    console.log("resetting to home... waiting to exit...");
-    // moveAlone(zero);
-    moveAll(0);
-    setTimeout(function() {process.stdin.pause();}, (tDur));
-  }
-});
+// // listen for the "keypress" event 
+// process.stdin.on('keypress', function (ch, key) {
+//   console.log('got "keypress"', key);
+//   if (key && key.ctrl && key.name == 'c') {
+//     process.stdin.pause();
+//   }
+//   if (key && key.name == 'h') {
+//     // moveAlone(zero);
+
+//     var now = new Date().getTime();
+//     console.log(timePressed, now, now - timePressed);
+
+//     if ((now - timePressed) > delta) {
+//       console.log("resetting to home... waiting to exit...");
+//       moveAll(0);
+//       setTimeout(function() {process.stdin.pause();}, (tDur));
+//     }
+
+//     timePressed = new Date().getTime();
+//   }
+// });
  
-process.stdin.setRawMode(true);
-process.stdin.resume();
+// process.stdin.setRawMode(true);
+// process.stdin.resume();
 
 
 ///////////////////////////////////////////////////
