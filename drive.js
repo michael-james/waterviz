@@ -8,9 +8,9 @@ const board = new five.Board({ io: new Raspi() });
 ///////////////////////////////////////////////////
 
 var count = 11;        // number of servos
-var gMin = 50;         // global minimum degrees
+var gMin = 0;         // global minimum degrees
 // var gMax = 180;        // global maximum degrees
-// var gMin = 20;         // global minimum degrees
+// var gMin = 50;         // global minimum degrees
 var gMax = 100;        // global maximum degrees
 var tDur = 3000;      // duration of movement in ms
 var tDly = 2000;       // duration of delay in ms
@@ -53,7 +53,7 @@ board.on("ready", () => {
   // }
 
   setTimeout(function() {
-    moveAlone(newData()); // constant rate
+    // moveAlone(newData()); // constant rate
     // moveAlone(newData(), false); // constant time
     // moveTogether(newData()); setInterval(function() {console.log(); moveTogether(newData());}, tTot);
     // moveAll(0);
@@ -117,7 +117,7 @@ function moveAlone(data) {
         // }, tTot);
 
         setTimeout(function() {
-          moveAlone(newData());
+          // moveAlone(newData());
         }, tDly);
       }
     }, myDur);
