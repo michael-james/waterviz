@@ -8,10 +8,10 @@ const board = new five.Board({ io: new Raspi() });
 ///////////////////////////////////////////////////
 
 var count = 11;        // number of servos
-var gMin = 0;         // global minimum degrees
+var gMin = 50;         // global minimum degrees
 // var gMax = 180;        // global maximum degrees
 // var gMin = 20;         // global minimum degrees
-var gMax = 140;        // global maximum degrees
+var gMax = 100;        // global maximum degrees
 var tDur = 3000;      // duration of movement in ms
 var tDly = 2000;       // duration of delay in ms
 var constRate = false;  // movement always at same speed?
@@ -30,6 +30,7 @@ var offsets = [
 
 var tTot = tDur + tDly;   // duration of delay in ms
 var s = []; // servos
+var zero = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 board.on("ready", () => {
   console.log("Connected");
@@ -135,10 +136,13 @@ function moveAll(val) {
   moveTogether(data);
 }
 
-function newData() {
+function newData(zero) {
   var data = [];
   valMax = !valMax;
   var val = valMax * 1.0;
+  if (zero) {
+    val = 0;
+  }
   for (var i = 0; i < s.length; i++) {
     if (!fakeMax) {val = Math.random();}
     data.push(val);
@@ -189,6 +193,32 @@ process.on('SIGINT', exitHandler.bind(null, {exit:true}));
 
 // //catches uncaught exceptions
 // process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+
+///////////////////////////////////////////////////
+// keypress
+///////////////////////////////////////////////////
+
+var keypress = require('keypress');
+ 
+// make `process.stdin` begin emitting "keypress" events 
+keypress(process.stdin);
+ 
+// listen for the "keypress" event 
+process.stdin.on('keypress', function (ch, key) {
+  console.log('got "keypress"', key);
+  if (key && key.ctrl && key.name == 'c') {
+    process.stdin.pause();
+  }
+  if (key && key.name == 'h') {
+    console.log("resetting to home... waiting to exit...");
+    // moveAlone(zero);
+    moveAll(0);
+    setTimeout(function() {process.stdin.pause();}, (tDur));
+  }
+});
+ 
+process.stdin.setRawMode(true);
+process.stdin.resume();
 
 
 ///////////////////////////////////////////////////
