@@ -14,15 +14,17 @@ var tDur = 24000;      // duration of movement in ms
 var tDly = 5000;       // duration of delay in ms
 var constRate = false;  // movement always at same speed?
 var randOrder = false;  // moves servos alone out of order
-var fakeMax = true;		// force water to go full range instead of random values
-var valMax = false;		// game variable (used to switch between max and min)
-var stop = false;		// used for emergency stop sequence
+var fakeMax = false;		// <<<<<<<<force water to go full range instead of random values
+var custom = true; // <<<<<<<<use my own data instead of random
 
 // 0 = number, 1 = min offset, 2 = max offset
 var offsets = [
     [ 0, 0, 0], [ 1, 0, 0], [ 2, 0, 0], [ 3, 0, 0], [ 4, 0, 0], [ 5, 0, 0],
     [ 6, 0, 0], [ 7, 0, 0], [ 8, 0, 0], [ 9, 0, 0], [10, 0, 0], [11, 0, 0]
 ];
+
+var customData = [0.7, 0.6, 0.5, 0.7, 0.01,
+                  0.01, 0.3, 0.01, 0.3, 0.01];
 
 ///////////////////////////////////////////////////
 // default global variables
@@ -31,6 +33,8 @@ var offsets = [
 var tTot = tDur + tDly;   // duration of delay in ms
 var s = []; // servos
 var zero = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var valMax = false;   // game variable (used to switch between max and min)
+var stop = false;   // used for emergency stop sequence
 
 ///////////////////////////////////////////////////
 // control actuators
@@ -155,12 +159,14 @@ function newData(zero) {
   var data = [];
   // switches the valMax variable between 0 and 1 during fakeMax
   valMax = !valMax;
-  var val = valMax * 1.0;
+  var my = valMax * 1.0;
 
   // creates array
   for (var i = 0; i < s.length; i++) {
+    var val = Math.random();
   	// if fakeMax is off, random value, else use values from above
-    if (!fakeMax) {val = Math.random();}
+    if (custom) {val = customData[i];}
+    if (fakeMax) {val = my;}
     data.push(val);
   }
   return data;
