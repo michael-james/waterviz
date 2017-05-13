@@ -23,8 +23,17 @@ var offsets = [
     [ 6, 0, 0], [ 7, 0, 0], [ 8, 0, 0], [ 9, 0, 0], [10, 0, 0], [11, 0, 0]
 ];
 
-var customData = [0.7, 0.6, 0.5, 0.7, 0.01,
-                  0.01, 0.3, 0.01, 0.3, 0.01];
+// var customData = [0.7, 0.6, 0.5, 0.7, 0.01,
+//                   0.01, 0.3, 0.01, 0.3, 0.01];
+
+// var customData = [0.5, 0.5, 0.5, 0.5, 0.5,
+//                   0.5, 0.5, 0.5, 0.5, 0.5];
+
+// var customData = [1.0, 1.0, 1.0, 1.0, 1.0,
+//                   1.0, 1.0, 1.0, 1.0, 1.0];
+
+var customData = [0.4, 0.4, 0.4, 0.4, 0.4,
+                  0.4, 0.4, 0.4, 0.4, 0.4];
 
 ///////////////////////////////////////////////////
 // default global variables
@@ -65,10 +74,13 @@ board.on("ready", () => {
   }
 
   setTimeout(function() {
-    moveAlone(newData()); // constant rate
+    // moveAlone(newData()); // constant rate
     // moveAlone(newData(), false); // constant time
     // moveTogether(newData()); setInterval(function() {console.log(); moveTogether(newData());}, tTot);
-    // moveAll(0);
+    moveAll(1, false);
+    setTimeout(function() {
+      moveAll(0, false);
+    }, tDur * 4 + tDly);
   }, tDur);
 });
 
@@ -78,7 +90,7 @@ function moveTogether(data, literal) {
     // apply offsets to global range
     var myMin = gMin + offsets[i][1];
     var myMax = gMax + offsets[i][2];
-    var myDur = tDur * 2; // when things are moved together, they are twice as slow
+    var myDur = tDur * 4; // when things are moved together, they are twice as slow
     
     // convert data to my degrees then move to
     var degrees = myMin + Math.floor(data[i] * (myMax - myMin));
@@ -87,6 +99,9 @@ function moveTogether(data, literal) {
     s[i].to(degrees, myDur); // moves servo to degrees over myDur ms
     console.log("servo " + i + " to " + degrees + " degrees in " + myDur + "ms");
   }
+  setTimeout(function() {
+      console.log("done!");
+    }, myDur);
 }
 
 function moveAlone(data) {
@@ -113,7 +128,7 @@ function moveAlone(data) {
         myDur = Math.floor(myAngle / myArc * tDur)
       };
       // if servo set to 0, double duration of movement (makes it slower when moving down to zero)
-      if (data[j] == 0) {myDur = myDur * 2;}
+      if (data[j] == 0) {myDur = myDur * 4;}
       
       console.log("servo " + j + " to " + degrees + " degrees in " + myDur + "ms");
       s[j].to(degrees, myDur); // moves servo to degrees over myDur ms
@@ -131,9 +146,10 @@ function moveAlone(data) {
         } 
         else {
         	// start another full loop after tDly
-          setTimeout(function() {
-            moveAlone(newData());
-          }, tDly);
+          // setTimeout(function() {
+          //   moveAlone(newData());
+          // }, tDly);
+          moveAll(0, false);
         }
       }, myDur);
     }
@@ -144,14 +160,14 @@ function moveAlone(data) {
 }
 
 // wrapper for moveTogether; moves all servos to val
-function moveAll(val) {
+function moveAll(val, literal) {
   var data = [];
   for (var i = 0; i < s.length; i++) {
     data.push(val);
   }
 
   console.log("\n=== move all to " + val + "% ===");
-  moveTogether(data, true);
+  moveTogether(data, literal);
 }
 
 // generates new array of random data (or fake values)
@@ -231,8 +247,13 @@ process.stdin.on('keypress', function (ch, key) {
       }
 
       console.log("resetting to home... waiting to exit...");
-      setTimeout(function() {moveAll(0);}, (tDly)); // move all to zero
-      setTimeout(function() {process.stdin.pause();}, (tDur + tDly)); // end process
+      setTimeout(function() {moveAll(0, true);}, (tDly)); // move all to zero
+      setTimeout(function() {
+        for (var i = 0; i < s.length; i++) {
+          s[i].stop();
+        }
+        process.stdin.pause();
+      }, (tDur * 4 + tDly)); // end process
     }
 
     timePressed = new Date().getTime();
