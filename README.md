@@ -1,6 +1,6 @@
 # Water Viz
 
-[Final Code for Raspberry Pi] (https://github.com/michael-james/waterviz/blob/master/drive.js)
+[Final Code for Raspberry Pi](https://github.com/michael-james/waterviz/blob/master/drive.js)
 
 [Johnny-Five Servo Reference](https://github.com/rwaldron/johnny-five/wiki/Servo)
 
